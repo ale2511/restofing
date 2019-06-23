@@ -16,9 +16,10 @@ using namespace std;
 
 set<TipoDomicilio*> ContrEmpleado :: getVentasRepartidor(int nro){
 	set<TipoDomicilio*> devolver;
-    Repartidor* repartidor = CRepartidor[nro];
-    if (repartidor != NULL){
-       devolver = repartidor->getTipoDomicilio();
+	map<int, Repartidor*> :: iterator it;
+    it = CRepartidor.find(nro);
+    if (it != CRepartidor.end()){
+       devolver = it->second->getTipoDomicilio();
    }
  return devolver;
 }
@@ -181,6 +182,8 @@ set <TipoMesaMozo*> ContrEmpleado :: AsignarMozoMesas() { //HACER //falta lo de 
 	//TipoMesaMozo* nuevo = new TipoMesaMozo(2,2);
 	//res.insert(nuevo);
 	//cout << CMesa.size();
+		if(CMesa.size() > 0){
+
 	ContrVenta* vent = ContrVenta::getInstance();
 	if (vent->localEsVacia()){
 	int cantRepartir = floor (CMesa.size()/CMozo.size());
@@ -217,6 +220,7 @@ set <TipoMesaMozo*> ContrEmpleado :: AsignarMozoMesas() { //HACER //falta lo de 
 		TipoMesaMozo* nuevo = it->second->getMesasMozo();
 		res.insert(nuevo);
 			}}
+		}
 	return res;
 }
   
@@ -247,13 +251,14 @@ set <TipoMesa*> ContrEmpleado :: VerMesasMozo(int nro) {
  
 void ContrEmpleado::ElegirMesaMozo(set<int> mesas) { 
 	set<int> quedan;
-	Mozo * mozo = CMozo[getNroEmpleado()];
-       if (mozo != NULL){
+	map<int, Mozo*> :: iterator mozo;
+	mozo = CMozo.find(getNroEmpleado());
+       if (mozo != CMozo.end()){
 
 	set<int> :: iterator it;
 	for (it = mesas.begin(); it != mesas.end(); ++it)
 	{
-       if(mozo->MesaPertenece(*it)){
+       if(mozo->second->MesaPertenece(*it)){
        	quedan.insert(*it);
        }
 
@@ -265,10 +270,11 @@ void ContrEmpleado::ElegirMesaMozo(set<int> mesas) {
 }
 	 
 void ContrEmpleado :: ConfirmarVentaEnMesa() { 
-   Mozo* mozo = CMozo[getNroEmpleado()];
-   if (mozo != NULL){
-   mozo->CambiarEstadoMesas(eleccionMesaMozo, true);
-   map<int, Mesa*> mesasenviar = mozo->DevolverMesasElegidas(eleccionMesaMozo);
+    map<int, Mozo*> :: iterator mozo;
+   mozo = CMozo.find(getNroEmpleado());
+   if (mozo != CMozo.end()){
+   mozo->second->CambiarEstadoMesas(eleccionMesaMozo, true);
+   map<int, Mesa*> mesasenviar = mozo->second->DevolverMesasElegidas(eleccionMesaMozo);
    map<int, Mesa*> :: iterator it;
    set <Mesa*> rily;
    it = mesasenviar.begin();
@@ -426,9 +432,11 @@ return repartidores;
 
 TipoRepartidor* ContrEmpleado :: obtenerTipoRepartidor(int nro){
    TipoRepartidor* nuevo;
-   Repartidor* reparte = CRepartidor[nro];
-   if (reparte != NULL){
-   	nuevo = new TipoRepartidor(reparte->getnroEmpleado(), reparte->getNombre(), reparte->getTransporte());
+   	map<int, Repartidor*> :: iterator reparte;
+
+   reparte = CRepartidor.find(nro);
+   if (reparte != CRepartidor.end()){
+   	nuevo = new TipoRepartidor(reparte->second->getnroEmpleado(), reparte->second->getNombre(), reparte->second->getTransporte());
    } else{
    	nuevo = NULL;
    }
@@ -437,9 +445,11 @@ return nuevo;
 
 TipoMozo* ContrEmpleado :: obtenerTipoMozo(int nro){
 	TipoMozo* nuevo;
-	Mozo* mozi = CMozo[nro];
-	if (mozi != NULL){
-		nuevo = new TipoMozo(mozi->getnroEmpleado(), mozi->getNombre(), mozi->mesasTipoDevolver());
+		map<int, Mozo*> :: iterator mozi;
+
+	mozi = CMozo.find(nro);
+	if (mozi != CMozo.end()){
+		nuevo = new TipoMozo(mozi->second->getnroEmpleado(), mozi->second->getNombre(), mozi->second->mesasTipoDevolver());
 	} else {
 		nuevo = NULL;
 	}

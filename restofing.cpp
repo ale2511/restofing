@@ -233,8 +233,8 @@ void AltaProd() {
 				if (!eleccion.compare("1")) {
 					simple = true;
 					cout << "Ingrese la descripcion del producto\n" << '\n';
-					fflush(stdin);
-					//cin.ignore(1,'\n');
+					//fflush(stdin);
+					cin.ignore(1,'\n');
 					leerString(descripcion);
 					cout << "Ingrese el precio del producto\n" << '\n';
 					cin >> sPrecio;
