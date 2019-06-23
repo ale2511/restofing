@@ -24,6 +24,9 @@ class Domicilio : public Venta {
 	Domicilio(string, Cliente*);
 	Cliente* getCliente();
 	TipoEstado getEstado();
+        string getNombreCliente();
+        string getTelCliente();
+        string getDireccion();
 	void setEstado(TipoActualizacion*, TipoEstado);
 	void setRepartidor(int);
 	int getRepartidor();

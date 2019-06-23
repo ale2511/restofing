@@ -830,8 +830,27 @@ void VentaDomicilio() {
 	}
 }
 
+
+void VentasRepartidor(){
+
+cout << "Ingrese numero de empleado: " << endl;
+        int nro;
+        cin >> nro;
+        set<TipoDomicilio*> ventas = MEP->getVentasRepartidor(nro);
+         set<TipoDomicilio*> :: iterator k;
+        for (k = ventas.begin(); k != ventas.end(); ++k)
+        {
+        	TipoDomicilio* domi = *k;
+        	cout << domi << endl;
+        }
+
+
+}
+
+
 void ModificarEstado() {
 	try {
+		VentasRepartidor();
 		string cod, sEstado, confirmar;
 		int estado;
 		float descuentazo;
@@ -1016,6 +1035,9 @@ void CargarDatos() {
 	}
 }
 
+//------------nuevo
+
+
 
 
 
@@ -1148,6 +1170,7 @@ int main() {
 					cout << "----------------------------------------------------------------"<< "\n";
 
 					cout << "1-Modificar estado pedido"<<"\n";
+					cout << "2 - Ventas repartidor" << endl;
 					cout << "0-volver"<<"\n";
 					cout << "Opcion: ";
 
@@ -1155,6 +1178,10 @@ int main() {
 					switch(bandera1) {
 						case 1:{
 							ModificarEstado();
+							break;
+						}
+						case 2:{
+							VentasRepartidor();
 							break;
 						}
 						default:break;

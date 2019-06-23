@@ -14,6 +14,15 @@
 using namespace std; 
 
 
+set<TipoDomicilio*> ContrEmpleado :: getVentasRepartidor(int nro){
+	set<TipoDomicilio*> devolver;
+    Repartidor* repartidor = CRepartidor[nro];
+    if (repartidor != NULL){
+       devolver = repartidor->getTipoDomicilio();
+   }
+ return devolver;
+}
+
 
 //---------------------------------
 void ContrEmpleado :: AgregarMozo(Mozo* mozo){

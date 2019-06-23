@@ -79,6 +79,7 @@ class ContrEmpleado : public IAltaEmpleado, public IAsignarMozosAMesas, public I
 		TipoMozo* obtenerTipoMozo(int);
 		void crearmesa(int);
 		void VaciarMesas();
+		set<TipoDomicilio*> getVentasRepartidor(int);
 };
 
 #endif

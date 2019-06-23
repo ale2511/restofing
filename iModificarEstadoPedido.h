@@ -20,6 +20,8 @@ class IModificarEstadoPedido {
 		virtual void confirmarNuevoEstado() = 0;
 		virtual TipoFactura * facturar(float) = 0;
 		virtual ~IModificarEstadoPedido(){};
+                virtual 		set<TipoDomicilio*> getVentasRepartidor(int) = 0;
+
 };
 
 #endif

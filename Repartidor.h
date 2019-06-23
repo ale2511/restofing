@@ -10,6 +10,7 @@
 #include "Empleado.h"
 #include "Domicilio.h"
 #include "tipoRepartidor.h"
+#include "TipoDomicilio.h"
 using namespace std; 
 
 class Repartidor: public Empleado {
@@ -21,6 +22,7 @@ public:
 	Repartidor(int, string, TipoTransporte);
 	TipoTransporte getTransporte();
 	map <string, Domicilio*> getDomicilio();
+        set<TipoDomicilio*> getTipoDomicilio();
 	void setTransporte(TipoTransporte);
     void setDomicilio(Domicilio *);
     void borrarDomicilio(Domicilio*);

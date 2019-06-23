@@ -12,7 +12,7 @@ CCFLAGS = -Wall -Werror -I$(HDIR) -g -DNDEBUG
 
 
 
-principal:restofing.cpp TipoEmpleado.o tipoMesa.o Empleado.o Mozo.o Mesa.o Repartidor.o ContrEmpleado.o cantProdMenu.o CantProducto.o Cliente.o ContrVenta.o Domicilio.o Factura.o factory.o Venta.o tipoSimple.o tipoRepartidor.o tipoProducto.o tipoMozo.o tipoMozo.o tipoMesaMozo.o tipoMenu.o TipoHora.o TipoFecha.o tipofactura.o TipoDireccionApart.o TipoDireccionApart.o tipodireccion.o tipocliente.o tipoCantProducto.o tipoCantProdMenu.o tipoactualizacion.o simple.o prodGral.o menu.o Local.o IVentaADomicilio.h iQuitarProductoAUnaVenta.h ObserverDomicilio.h iModificarEstadoPedido.h iIniciarVentaEnMesas.h iInformacionDeUnProducto.h IFacturacionDeUnDia.h iFacturacionDeUnaVenta.h iConsultarPedidoCliente.h iConsultarPedidoAdmin.h iBajaProducto.h iAgregarProductoAUnaVenta.h iAltaEmpleado.h iAsignarMozosAMesas.h iAltaProducto.h Factura.o factory.o ContrVenta.o Domicilio.o contrProducto.o Cliente.o CantProducto.o cantProdMenu.o
+principal:restofing.cpp TipoEmpleado.o tipoMesa.o Empleado.o Mozo.o Mesa.o Repartidor.o ContrEmpleado.o cantProdMenu.o CantProducto.o Cliente.o ContrVenta.o Domicilio.o Factura.o factory.o Venta.o tipoSimple.o tipoRepartidor.o tipoProducto.o tipoMozo.o tipoMozo.o tipoMesaMozo.o tipoMenu.o TipoHora.o TipoFecha.o tipofactura.o TipoDireccionApart.o TipoDireccionApart.o tipodireccion.o tipocliente.o tipoCantProducto.o tipoCantProdMenu.o tipoactualizacion.o simple.o prodGral.o menu.o Local.o IVentaADomicilio.h iQuitarProductoAUnaVenta.h ObserverDomicilio.h iModificarEstadoPedido.h iIniciarVentaEnMesas.h iInformacionDeUnProducto.h IFacturacionDeUnDia.h iFacturacionDeUnaVenta.h iConsultarPedidoCliente.h iConsultarPedidoAdmin.h iBajaProducto.h iAgregarProductoAUnaVenta.h iAltaEmpleado.h iAsignarMozosAMesas.h iAltaProducto.h Factura.o factory.o ContrVenta.o Domicilio.o contrProducto.o Cliente.o CantProducto.o cantProdMenu.o TipoDomicilio.o
 	$(CC) $(CCFLAGS) $^ -o $@
 	@./principal
 
@@ -90,6 +90,9 @@ Repartidor.o:Repartidor.cpp
 	$(CC) $(CCFLAGS) -c $^ 
 
 ContrEmpleado.o:ContrEmpleado.cpp
+	$(CC) $(CCFLAGS) -c $^ 
+
+TipoDomicilio.o:TipoDomicilio.cpp
 	$(CC) $(CCFLAGS) -c $^ 
 # borra binarios
 clean_bin:

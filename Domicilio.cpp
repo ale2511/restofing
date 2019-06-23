@@ -63,3 +63,38 @@ void Domicilio :: setRepartidor(int a) {
 int Domicilio :: getRepartidor(){
 	return nroRepartidor;
 }
+
+string Domicilio :: getNombreCliente(){
+    string devolver;
+    if (cliente != NULL){
+    devolver = cliente->getNombre();
+
+} else{ devolver = "No hay cliente asignado"; }
+return devolver;
+
+}
+
+string Domicilio :: getTelCliente(){
+ string devolver;
+ if (cliente != NULL){
+    devolver = cliente->getTel();
+
+} else{ devolver = "No hay cliente asignado"; }
+
+return devolver;
+
+
+}
+
+string Domicilio :: getDireccion(){
+ string devolver;
+ if (cliente != NULL){
+    TipoDireccion* di = cliente->getDireccion();
+    devolver = di->getCalle();
+
+} else{ devolver = "No hay cliente asignado"; }
+
+return devolver;
+
+
+}
