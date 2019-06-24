@@ -18,10 +18,10 @@ Factura :: Factura(string nro, map<string, TipoCantProducto*> prods, TipoFecha* 
 	}
 	empleado = f;
 }
+
 string Factura :: getNrofactura(){
 	 return nroFactura;
 }
-
 map<string, TipoCantProducto*> Factura :: mostrarTipoProds() {
 	return productos;
 }

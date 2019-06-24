@@ -14,95 +14,6 @@
 using namespace std; 
 
 
-
-void ContrEmpleado :: cargarAct(){
-	setCodVenta("1");
-TipoHora* nuevo1 = new TipoHora(21,27,0);
-			TipoFecha* fecha1 = new TipoFecha(16,06,2019);
-			    confirmarNuevoEstadoCargar(Encamino, fecha1, nuevo1);
-	setCodVenta("3");
-TipoHora* nuevo2 = new TipoHora(21,27,0);
-		TipoFecha* fecha2 = new TipoFecha(16,06,2019);
-			    confirmarNuevoEstadoCargar(Encamino, fecha2, nuevo2);
-setCodVenta("3");
-TipoHora* nuevo3 = new TipoHora(21,14,0);
-		TipoFecha* fecha3 = new TipoFecha(16,06,2019);
-			    confirmarNuevoEstadoCargar(Pedido, fecha3, nuevo3);
-setCodVenta("1");
-TipoHora* nuevo4 = new TipoHora(21,13,0);
-			TipoFecha* fecha4 = new TipoFecha(16,06,2019);
-			    confirmarNuevoEstadoCargar(Pedido, fecha4, nuevo4);
-setCodVenta("2");
-TipoHora* nuevo5 = new TipoHora(16,37,0);
-			TipoFecha* fecha5 = new TipoFecha(16,06,2019);
-			    confirmarNuevoEstadoCargar(Entregado, fecha5, nuevo5);
-
-setCodVenta("2");
-TipoHora* nuevo6 = new TipoHora(16,15,0);
-			TipoFecha* fecha6 = new TipoFecha(16,06,2019);
-			    confirmarNuevoEstadoCargar(Encamino, fecha6, nuevo6);
-setCodVenta("2");
-TipoHora* nuevo7 = new TipoHora(15,02,0);
-			TipoFecha* fecha7 = new TipoFecha(16,06,2019);
-			    confirmarNuevoEstadoCargar(Pedido, fecha7, nuevo7);
-
-
-
-
-		}
-
-void ContrEmpleado :: confirmarNuevoEstadoCargar(TipoEstado e, TipoFecha* newFecha, TipoHora* newHora) {
- 
-	Repartidor* repartidor ;
-	map <int,Repartidor*> :: iterator it;
-	it = CRepartidor.begin();
-	Domicilio * d  = NULL;
-
-	while ((it != CRepartidor.end()) && (d == NULL)) {
-		map <string, Domicilio*> CDom = it->second->getDomicilio();
-		Domicilio* gg = CDom[getCodVenta()];
-		if (gg != NULL){
-			d  = CDom[getCodVenta()];
-			repartidor = it->second;
-		}
-		else
-			++it;
-	};
-	if (d != NULL) {
-		set<TipoCantProducto*> losprods;
-		map<string, CantProducto*> cp = d->getMapCP();
-		map<string, CantProducto*> :: iterator it;
-		ContrProducto* producto = ContrProducto::getInstance();
-		for(it = cp.begin(); it != cp.end(); ++it){
-			TipoCantProducto* nuevo = new TipoCantProducto(it->second->getCant(),producto->getDTProd(it->second->getCodProdGral()) );
-			losprods.insert(nuevo);
-
-		}
-		Cliente* cliente = d->getCliente();
-		string nombre = cliente->getNombre();
-		TipoActualizacion* nueva = new TipoActualizacion(newHora, newFecha,  repartidor->getNombre(), nombre, losprods, d->getCliente()->getTel(), e);
-		cout << "imprimr actu" << nueva->getNombrerepartidor() << endl;
-		ContrVenta* venta = ContrVenta::getInstance();
-		venta->AgregarMensaje(nueva);
-		d->setEstado(nueva, e);
-		
-
-	}
-}
-
-
-
-
-
-
-
-
-
-
-
-//-------------
-
-
 set<TipoDomicilio*> ContrEmpleado :: getVentasRepartidor(int nro){
 	set<TipoDomicilio*> devolver;
 	map<int, Repartidor*> :: iterator it;
@@ -268,13 +179,11 @@ void ContrEmpleado :: VaciarMesas(){
 set <TipoMesaMozo*> ContrEmpleado :: AsignarMozoMesas() { //HACER //falta lo de aleatorio y llenar el tipomesa set
 	VaciarMesas();
 	set <TipoMesaMozo*> res;
-	//TipoMesaMozo* nuevo = new TipoMesaMozo(2,2);
-	//res.insert(nuevo);
-	//cout << CMesa.size();
-		if(CMesa.size() > 0){
+	
+		if(!CMesa.empty()){
 
 	ContrVenta* vent = ContrVenta::getInstance();
-	if (vent->localEsVacia()){
+	if (vent->localEsVacia()&&!CMozo.empty()){
 	int cantRepartir = floor (CMesa.size()/CMozo.size());
 	map<int, Mozo*> :: iterator it;
 	map<int, Mesa*> :: iterator it1;
@@ -308,7 +217,8 @@ set <TipoMesaMozo*> ContrEmpleado :: AsignarMozoMesas() { //HACER //falta lo de 
 	{
 		TipoMesaMozo* nuevo = it->second->getMesasMozo();
 		res.insert(nuevo);
-			}}
+			}
+		}
 		}
 	return res;
 }
@@ -361,7 +271,7 @@ void ContrEmpleado::ElegirMesaMozo(set<int> mesas) {
 void ContrEmpleado :: ConfirmarVentaEnMesa() { 
     map<int, Mozo*> :: iterator mozo;
    mozo = CMozo.find(getNroEmpleado());
-   if ((mozo != CMozo.end()) && (eleccionMesaMozo.size() > 0)){
+   if (mozo != CMozo.end()&& (eleccionMesaMozo.size() > 0)){
    mozo->second->CambiarEstadoMesas(eleccionMesaMozo, true);
    map<int, Mesa*> mesasenviar = mozo->second->DevolverMesasElegidas(eleccionMesaMozo);
    map<int, Mesa*> :: iterator it;
@@ -416,9 +326,6 @@ void ContrEmpleado :: confirmarNuevoEstado() {
 
 	while ((it != CRepartidor.end()) && (d == NULL)) {
 		map <string, Domicilio*> CDom = it->second->getDomicilio();
-	//	map <string, Domicilio*> :: iterator itD;
-	//	itD = CDom.find(getCodVenta());
-		cout << "bruno            sdddddddddddddddddddddd                     " << getCodVenta() << endl;
 		Domicilio* gg = CDom[getCodVenta()];
 		if (gg != NULL){
 			d  = CDom[getCodVenta()];
@@ -475,17 +382,17 @@ void ContrEmpleado :: confirmarNuevoEstado() {
 		
 
 	} else {
-		
+
 		TipoEstado e = Entregado;
 		ContrVenta * cv = ContrVenta :: getInstance();
 		string nroventa = cv->getventa();
 		map <string, Domicilio *> doms = cv->getDomicilios();
 		d = doms[nroventa];
-		
+
 		if (d != NULL) {
-		
+
 			set<TipoCantProducto*> losprods;
-		
+
 			time_t fechaactual = time(0);  //guardo fecha pc
 			tm * time = localtime(&fechaactual); //convierto fecha pc en struct - uso ctime
 			TipoFecha * newFecha = new TipoFecha(time->tm_mday, time->tm_mon + 1, time->tm_year + 1900);  // creo un objeto con la fecha
@@ -505,13 +412,86 @@ void ContrEmpleado :: confirmarNuevoEstado() {
 
 
 			TipoActualizacion* nueva = new TipoActualizacion(newHora, newFecha, "No Hay Repartidor", nombre, losprods, d->getCliente()->getTel(), e);
-			//cout << "imprimr actu" << nueva->getNombrerepartidor() << endl;
 			cv->AgregarMensaje(nueva);
 			d->setEstado(nueva, e);
-			
+
 		}
+}}
+void ContrEmpleado :: cargarAct(){
+	setCodVenta("1");
+TipoHora* nuevo1 = new TipoHora(21,27,0);
+			TipoFecha* fecha1 = new TipoFecha(16,06,2019);
+			    confirmarNuevoEstadoCargar(Encamino, fecha1, nuevo1);
+	setCodVenta("3");
+TipoHora* nuevo2 = new TipoHora(21,27,0);
+		TipoFecha* fecha2 = new TipoFecha(16,06,2019);
+			    confirmarNuevoEstadoCargar(Encamino, fecha2, nuevo2);
+setCodVenta("3");
+TipoHora* nuevo3 = new TipoHora(21,14,0);
+		TipoFecha* fecha3 = new TipoFecha(16,06,2019);
+			    confirmarNuevoEstadoCargar(Pedido, fecha3, nuevo3);
+setCodVenta("1");
+TipoHora* nuevo4 = new TipoHora(21,13,0);
+			TipoFecha* fecha4 = new TipoFecha(16,06,2019);
+			    confirmarNuevoEstadoCargar(Pedido, fecha4, nuevo4);
+setCodVenta("2");
+TipoHora* nuevo5 = new TipoHora(16,37,0);
+			TipoFecha* fecha5 = new TipoFecha(16,06,2019);
+			    confirmarNuevoEstadoCargar(Entregado, fecha5, nuevo5);
+
+setCodVenta("2");
+TipoHora* nuevo6 = new TipoHora(16,15,0);
+			TipoFecha* fecha6 = new TipoFecha(16,06,2019);
+			    confirmarNuevoEstadoCargar(Encamino, fecha6, nuevo6);
+setCodVenta("2");
+TipoHora* nuevo7 = new TipoHora(15,02,0);
+			TipoFecha* fecha7 = new TipoFecha(16,06,2019);
+			    confirmarNuevoEstadoCargar(Pedido, fecha7, nuevo7);
+
+
+
+
+		}
+
+void ContrEmpleado :: confirmarNuevoEstadoCargar(TipoEstado e, TipoFecha* newFecha, TipoHora* newHora) {
+
+	Repartidor* repartidor ;
+	map <int,Repartidor*> :: iterator it;
+	it = CRepartidor.begin();
+	Domicilio * d  = NULL;
+
+	while ((it != CRepartidor.end()) && (d == NULL)) {
+		map <string, Domicilio*> CDom = it->second->getDomicilio();
+		Domicilio* gg = CDom[getCodVenta()];
+		if (gg != NULL){
+			d  = CDom[getCodVenta()];
+			repartidor = it->second;
+		}
+		else
+			++it;
+	};
+	if (d != NULL) {
+		set<TipoCantProducto*> losprods;
+		map<string, CantProducto*> cp = d->getMapCP();
+		map<string, CantProducto*> :: iterator it;
+		ContrProducto* producto = ContrProducto::getInstance();
+		for(it = cp.begin(); it != cp.end(); ++it){
+			TipoCantProducto* nuevo = new TipoCantProducto(it->second->getCant(),producto->getDTProd(it->second->getCodProdGral()) );
+			losprods.insert(nuevo);
+
+		}
+		Cliente* cliente = d->getCliente();
+		string nombre = cliente->getNombre();
+		TipoActualizacion* nueva = new TipoActualizacion(newHora, newFecha,  repartidor->getNombre(), nombre, losprods, d->getCliente()->getTel(), e);
+		cout << "imprimr actu" << nueva->getNombrerepartidor() << endl;
+		ContrVenta* venta = ContrVenta::getInstance();
+		venta->AgregarMensaje(nueva);
+		d->setEstado(nueva, e);
+
+
 	}
 }
+
 
 
 TipoFactura * ContrEmpleado :: facturar(float descuento) {
@@ -541,6 +521,9 @@ set<TipoMozo*> ContrEmpleado :: VerMozos(){
 }
 return mozos;
 }
+bool ContrEmpleado :: encontrarRepartidor(int a)
+{return (CRepartidor.find(a)!=CRepartidor.end());}
+
 
 set<TipoRepartidor*> ContrEmpleado :: VerRepartidores(){
    set<TipoRepartidor*> repartidores;

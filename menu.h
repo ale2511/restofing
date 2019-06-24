@@ -23,8 +23,8 @@ class Menu : public ProdGral {
 		//resto de operaciones
 		void nuevoCantProdMenu(string, int, Simple *);
 		TipoProducto * darDatosProd();
-		void reCalcularPrecio(Simple *, int);
-		bool vaciadoMenu(Simple *);
+		void vaciadoMenu(Simple *);
+		void reCalcularPrecio(CantProdMenu *);
 		void elimMenu();
 		//destructor
 		~Menu(){};

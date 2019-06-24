@@ -109,7 +109,7 @@ class ContrVenta : public IAgregarProductoAUnaVenta, public IQuitarProductoAUnaV
 	TipoActualizacion * ConfirmarMensaje();
 	set<TipoActualizacion*> ListarActualizaciones();
 	set<TipoActualizacion*> ListarActualizacionesSistema();
-	
+	set<TipoCantProducto*> FacturaATipoCantProducto (Factura *);
 	TipoCantProducto * obtenerTCPFact(string, TipoProducto *);
 	TipoFecha * hacedorFecha(int, int, int);
 	bool noHayVenta(string);

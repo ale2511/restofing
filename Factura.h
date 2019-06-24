@@ -20,8 +20,8 @@ class Factura {
 		TipoEmpleado* empleado;
 	public:
 		Factura(string, map<string, TipoCantProducto*>, TipoFecha*, TipoHora*, float, float, float, float, TipoEmpleado*);
-		string getNrofactura();
 		map<string, TipoCantProducto*> mostrarTipoProds();
+		string getNrofactura();
 		TipoFecha* getFecha();
 		TipoHora* getHora();
 		float getSubtotal();

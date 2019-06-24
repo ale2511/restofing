@@ -41,7 +41,7 @@ TipoMesaMozo* Mozo :: getMesasMozo(){
 }
 
 bool Mozo :: MesaPertenece(int m){
-  map<int, Mesa*> :: iterator mesi;
+ map<int, Mesa*> :: iterator mesi;
   mesi = mesas_estaticas.find(m);
   if (mesi != mesas_estaticas.end()){
     return true;
@@ -57,14 +57,13 @@ void Mozo :: CambiarEstadoMesas(set<int> mesas, bool estado){
 	set<int> :: iterator it;
 	for (it = mesas.begin(); it != mesas.end(); ++it)
    {
-      map<int, Mesa*> :: iterator mesita;
-   	  mesita = mesas_estaticas.find(*it);
+   	   map<int, Mesa*> :: iterator mesita;
+      mesita = mesas_estaticas.find(*it);
       if (mesita != mesas_estaticas.end()){
-   	  mesita->second->setActiva(estado);
+      mesita->second->setActiva(estado);
    	  if (estado){
-   	  	mesas_dinamicas[*it] = mesita->second  ;
-   	  } else { mesas_dinamicas.erase(*it); } //habria que agregar un else que la saque de la coleccion si es false estado
-
+   	  mesas_dinamicas[*it] = mesita->second  ;
+      } else { mesas_dinamicas.erase(*it); }
    }}
 
 

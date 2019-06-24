@@ -54,15 +54,7 @@ TipoProducto * Menu :: darDatosProd() {
 	return m;
 }
 
-void Menu :: reCalcularPrecio(Simple * s, int cant) {
-	float p = getPrecio() - (s->getPrecio() * cant * 0.9);
-	if (p < 0)
-		p = 0;
-	setPrecio(p);
-}
-
-bool Menu :: vaciadoMenu(Simple * s) {
-	bool vacio = true;
+void Menu :: vaciadoMenu(Simple * s) {
 	bool hayS = false;
 	map <string, CantProdMenu *> :: iterator it;
 	it = cpm.begin();
@@ -70,14 +62,19 @@ bool Menu :: vaciadoMenu(Simple * s) {
 		hayS = it->second->contiene(s);
 		if (hayS) {
 			CantProdMenu * aBorrar = it->second;
+			reCalcularPrecio(it->second);
 			cpm.erase(it->first);
 			aBorrar->~CantProdMenu();
-			reCalcularPrecio(s, it->second->getCant());
 		};
-		vacio = cpm.empty();
 		++it;
 	};
-	return vacio;
+}
+
+void Menu :: reCalcularPrecio(CantProdMenu * s) {
+	float p = getPrecio() - (s->getSimple()->getPrecio()* s->getCant() * 0.9);
+	if (p < 0)
+		p = 0;
+	setPrecio(p);
 }
 
 void Menu :: elimMenu() {
