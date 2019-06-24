@@ -166,30 +166,30 @@ bool ContrProducto :: noHayVenta(string cod) {
 void ContrProducto :: confirmarBajaProd() {
 	map <string, ProdGral *> :: iterator itP;
 	itP = prods.find(getCod());
+	if (itP!=prods.end())
+	{
 	ProdGral * p = itP->second;
 	prods.erase(itP->first);
 	Simple * s = dynamic_cast<Simple*>(p);
 	if (s != NULL) {
 		map <string, Menu *> :: iterator itM;
 		for (itM = menus.begin(); itM != menus.end(); ++itM) {
-			bool vacio = itM->second->vaciadoMenu(s);
-			if (vacio) {
+			itM->second->vaciadoMenu(s);
+			if (itM->second->getCPM().empty()) {
 				Menu * aBorrarM = itM->second;
 				menus.erase(itM->first);
-                    prods.erase(getCod());
+                prods.erase(itM->first);
 				aBorrarM->~Menu();
-			} else {
-				itM->second->reCalcularPrecio(s);
-			}
+			} 
 		}
-		sim.erase(getCod());
+		sim.erase(itP->first);
 		s->~Simple();
 	} else {
 		Menu * m = dynamic_cast<Menu*>(p);
 		m->elimMenu();
-		menus.erase(getCod());
+		menus.erase(itP->first);
 		m->~Menu();
-	}
+	}}
 }
 
 //mas operaciones

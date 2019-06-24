@@ -74,6 +74,7 @@ class ContrEmpleado : public IAltaEmpleado, public IAsignarMozosAMesas, public I
 		TipoFactura * facturar(float);
 		set<TipoMozo*> VerMozos();
 		set<TipoRepartidor*> VerRepartidores();
+		bool encontrarRepartidor(int);
 		void CambiarEstado(set<int>, int);
 		TipoRepartidor* obtenerTipoRepartidor(int);
 		TipoMozo* obtenerTipoMozo(int);

@@ -179,13 +179,11 @@ void ContrEmpleado :: VaciarMesas(){
 set <TipoMesaMozo*> ContrEmpleado :: AsignarMozoMesas() { //HACER //falta lo de aleatorio y llenar el tipomesa set
 	VaciarMesas();
 	set <TipoMesaMozo*> res;
-	//TipoMesaMozo* nuevo = new TipoMesaMozo(2,2);
-	//res.insert(nuevo);
-	//cout << CMesa.size();
-		if(CMesa.size() > 0){
+	
+		if(!CMesa.empty()){
 
 	ContrVenta* vent = ContrVenta::getInstance();
-	if (vent->localEsVacia()){
+	if (vent->localEsVacia()&&!CMozo.empty()){
 	int cantRepartir = floor (CMesa.size()/CMozo.size());
 	map<int, Mozo*> :: iterator it;
 	map<int, Mesa*> :: iterator it1;
@@ -327,9 +325,6 @@ void ContrEmpleado :: confirmarNuevoEstado() {
 
 	while ((it != CRepartidor.end()) && (d == NULL)) {
 		map <string, Domicilio*> CDom = it->second->getDomicilio();
-	//	map <string, Domicilio*> :: iterator itD;
-	//	itD = CDom.find(getCodVenta());
-		cout << "bruno            sdddddddddddddddddddddd                     " << getCodVenta() << endl;
 		Domicilio* gg = CDom[getCodVenta()];
 		if (gg != NULL){
 			d  = CDom[getCodVenta()];
@@ -416,6 +411,9 @@ set<TipoMozo*> ContrEmpleado :: VerMozos(){
 }
 return mozos;
 }
+bool ContrEmpleado :: encontrarRepartidor(int a)
+{return (CRepartidor.find(a)!=CRepartidor.end());}
+
 
 set<TipoRepartidor*> ContrEmpleado :: VerRepartidores(){
    set<TipoRepartidor*> repartidores;

@@ -546,12 +546,12 @@ set <TipoRepartidor *> ContrVenta :: verRepartidores() {
 
 void ContrVenta :: elegirRepartidor(int repartidor) {
 	string a = getventa();
-      cout << "ESTE ES: " <<   a << endl;
-	Domicilio * d = domicilios[a];
-    if (d != NULL){
-	d->setRepartidor(repartidor);
+	map <string, Domicilio *>::iterator domicilio;
+   	domicilio = domicilios.find(a);
+    if (domicilio==domicilios.end()){
+	domicilio->second->setRepartidor(repartidor);
     ContrEmpleado* ce = ContrEmpleado::getInstance();
-    ce->guardarVentaRepartidor(repartidor, d);
+    ce->guardarVentaRepartidor(repartidor, domicilio->second);
     }
 }
 
@@ -615,6 +615,8 @@ TipoActualizacion * ContrVenta :: ConfirmarMensaje() {
 	set <TipoActualizacion*> :: iterator aux;
 	aux = ta.begin();
 	TipoActualizacion * currentAux = *aux;
+	if (aux!=ta.end())
+	{
 	TipoFecha * fechaAux = currentAux->getFecha();
 	TipoHora * horaAux = currentAux->getHora();
 	bool huboCambios = false;
@@ -634,7 +636,7 @@ TipoActualizacion * ContrVenta :: ConfirmarMensaje() {
 				currentAux = current;
 			}
 		}
-	}
+	}}
 	return currentAux;
 }
 
