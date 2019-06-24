@@ -21,6 +21,7 @@ class IModificarEstadoPedido {
 		virtual TipoFactura * facturar(float) = 0;
 		virtual ~IModificarEstadoPedido(){};
                 virtual 		set<TipoDomicilio*> getVentasRepartidor(int) = 0;
+virtual void cargarAct() = 0;
 
 };
 

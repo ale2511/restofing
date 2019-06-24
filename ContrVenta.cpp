@@ -17,6 +17,9 @@
 using namespace std;
 
 
+
+
+
 //----------------------------------
 
 void ContrVenta :: AgregarVenta(Venta* venta){
@@ -288,6 +291,56 @@ void ContrVenta :: imprimirAct(){
 //----
 
 
+map <string, TipoCantProducto*> ContrVenta :: CPMapTCP (map <string, CantProducto *> elmapa) {
+	map <string, TipoCantProducto*> result;
+	set<string> conjCodigos; //set de codigos
+	
+	map <string, CantProducto *> :: iterator it1;
+	for (it1 = elmapa.begin(); it1!= elmapa.end(); ++it1) {
+		string s1 = it1->second->getCodProdGral();
+		conjCodigos.insert(s1);
+	}
+	
+	set<int> conjCants;//set de cantidades
+	map <string, CantProducto *> :: iterator it2;
+	for (it2 = elmapa.begin(); it2!= elmapa.end(); ++it2) {
+		int s2 = it2->second->getCant();
+		conjCants.insert(s2);
+	}
+	
+	
+	set<string> :: iterator at; //recorre codigos
+	set<int> :: iterator it; //recorre cantidades
+	TipoProducto * tp;
+	string cod;
+	int cant;
+	ContrProducto * ctrl = ContrProducto :: getInstance();
+	TipoCantProducto * tcp;
+	it = conjCants.begin();
+	for (at = conjCodigos.begin(); at != conjCodigos.end(); ++at) {
+		cod = *at;
+		tp = ctrl->getDTProd(cod);
+		cant = *it;
+		tcp = new TipoCantProducto(cant, tp);
+		result[cod] = tcp;
+		it++;
+	}
+	return result;
+}
+
+set <TipoCantProducto*> ContrVenta :: MapTCPSetTPC (map <string, TipoCantProducto*> elmapa) {
+
+	set <TipoCantProducto*> result;
+
+	map <string, TipoCantProducto*> :: iterator it;
+
+	for (it = elmapa.begin(); it != elmapa.end(); ++it)
+		result.insert(it->second);
+
+	return result;
+}
+
+
 TipoFactura * ContrVenta :: facturar(float descuentillo) {
 	//se necesita mandarle a Factura/TipoFactura:
 	//int nroVenta
@@ -301,12 +354,27 @@ TipoFactura * ContrVenta :: facturar(float descuentillo) {
 	string codventa = getventa(); //nroVenta listo
 	bool eslocal = true;
 	Venta * v;
-	v = locales[codventa];
+	
+	map <string, Local *> :: iterator busque;
+	busque = locales.find(codventa);
+	if (busque == locales.end()) {
+		eslocal = false;
+		v = domicilios[codventa];
+	} else {
+		v = locales[codventa];
+	}
+	
+	/*v = locales[codventa];
 	if (v == NULL) {
 		eslocal = false;
 		v = domicilios[codventa];
-	}
+	}*/
 	map<string, CantProducto*> mapafactura = v->getMapCP(); //map<string, CantProducto*> listo
+	map<string, TipoCantProducto*> mapatipocantproducto = CPMapTCP(mapafactura);
+		
+	
+	
+	
 	set<string> conjCodigos = v->mostrarCodProds(); //set de codigos
 	set<int> conjCants = v->mostrarCantProds();//set de cantidades
 	set <TipoCantProducto *> setatipofactura; //set TipoCantProducto nuevo
@@ -362,7 +430,7 @@ TipoFactura * ContrVenta :: facturar(float descuentillo) {
 	} else {
 		te = ctrle->obtenerTipoRepartidor(repartidorcillo);
 	}
-	Factura * f = new Factura(codventa, mapafactura, fecha, hora, sub_total, descuentillo, precio_sin_iva, totalcompra, te);
+	Factura * f = new Factura(codventa, mapatipocantproducto, fecha, hora, sub_total, descuentillo, precio_sin_iva, totalcompra, te);
 	facturas[codventa] = f;
 	
 	//ahora TipoFactura
@@ -402,9 +470,12 @@ set <TipoFactura *> ContrVenta :: verFacturasMozo(int numMozo, TipoFecha * f1, T
 			//float precio_sin_iva
 			//float totalcompra
 			string nroventa = it->second->getNrofactura();
+			
 			f = it->second;
 			set<TipoCantProducto*> setdesalida;
-			setdesalida = FacturaATipoCantProducto(f);
+			map<string, TipoCantProducto*> siche = f->mostrarTipoProds();
+			setdesalida = MapTCPSetTPC(siche);
+
 			TipoFecha* fechita = it->second->getFecha();
 			TipoHora* hora = it->second->getHora();
 			float subtotal = it->second->getSubtotal();
@@ -415,30 +486,6 @@ set <TipoFactura *> ContrVenta :: verFacturasMozo(int numMozo, TipoFecha * f1, T
 			TipoFactura * tf = new TipoFactura(nroventa, setdesalida, fechita, hora, subtotal, descuentillo, preciosiniva, totalito, te);
 			result.insert(tf);
 		}
-	}
-	return result;
-}
-
-
-set<TipoCantProducto*> ContrVenta :: FacturaATipoCantProducto (Factura * f) {
-	set<TipoCantProducto*> result;
-	set<string> conjCodigos = f->mostrarCodProds(); //set de codigos
-	set<int> conjCants = f->mostrarCantProds();//set de cantidades
-	set<string> :: iterator at; //recorre codigos
-	set<int> :: iterator it; //recorre cantidades
-	TipoProducto * tp;
-	string cod;
-	int cant;
-	ContrProducto * ctrl = ContrProducto :: getInstance();
-	TipoCantProducto * tcp;
-	it = conjCants.begin();
-	for (at = conjCodigos.begin(); at != conjCodigos.end(); ++at) {
-		cod = *at;
-		tp = ctrl->getDTProd(cod);
-		cant = *it;
-		tcp = new TipoCantProducto(cant, tp);
-		result.insert(tcp);
-		it++;
 	}
 	return result;
 }
@@ -465,9 +512,12 @@ set <TipoFactura *> ContrVenta :: verFacturasFecha(TipoFecha * fecha) {
 			//float precio_sin_iva
 			//float totalcompra
 			string nroventa = it->second->getNrofactura();
+			
 			f = it->second;
 			set<TipoCantProducto*> setdesalida;
-			setdesalida = FacturaATipoCantProducto(f);
+			map<string, TipoCantProducto*> siche = f->mostrarTipoProds();
+			setdesalida = MapTCPSetTPC(siche);
+			
 			TipoFecha* fechita = it->second->getFecha();
 			TipoHora* hora = it->second->getHora();
 			float subtotal = it->second->getSubtotal();
@@ -504,18 +554,22 @@ bool ContrVenta :: noHayCliente(string tel) {
 void ContrVenta :: iniciarVentaEnMesas(set<Mesa*> m, int nromozo) {
 	string a = getSumador();
 	map <int, Mesa *> amesas;
+	map <int, Mesa *> :: iterator it1;
 	set <Mesa *> :: iterator it;
 	int clave;
 	ContrEmpleado * ctrl = ContrEmpleado :: getInstance();
+	it = m.begin();
 	for (it = m.begin(); it != m.end(); ++it) {
 		Mesa* mesita = *it;
 		clave = ctrl->getNroMesa(mesita);
 		amesas[clave] = mesita;
 	}
+	it1 = amesas.begin();
+	if (it1 != amesas.end()){
 	Local * l = new Local(a, nromozo);
 	locales[a] = l;
 	ventas[a] = l;
-	l->setMesas(amesas);
+	l->setMesas(amesas);}
 }
 
 
@@ -546,12 +600,12 @@ set <TipoRepartidor *> ContrVenta :: verRepartidores() {
 
 void ContrVenta :: elegirRepartidor(int repartidor) {
 	string a = getventa();
-	map <string, Domicilio *>::iterator domicilio;
-   	domicilio = domicilios.find(a);
-    if (domicilio==domicilios.end()){
-	domicilio->second->setRepartidor(repartidor);
+      cout << "ESTE ES: " <<   a << endl;
+	Domicilio * d = domicilios[a];
+    if (d != NULL){
+	d->setRepartidor(repartidor);
     ContrEmpleado* ce = ContrEmpleado::getInstance();
-    ce->guardarVentaRepartidor(repartidor, domicilio->second);
+    ce->guardarVentaRepartidor(repartidor, d);
     }
 }
 
@@ -615,8 +669,6 @@ TipoActualizacion * ContrVenta :: ConfirmarMensaje() {
 	set <TipoActualizacion*> :: iterator aux;
 	aux = ta.begin();
 	TipoActualizacion * currentAux = *aux;
-	if (aux!=ta.end())
-	{
 	TipoFecha * fechaAux = currentAux->getFecha();
 	TipoHora * horaAux = currentAux->getHora();
 	bool huboCambios = false;
@@ -636,7 +688,7 @@ TipoActualizacion * ContrVenta :: ConfirmarMensaje() {
 				currentAux = current;
 			}
 		}
-	}}
+	}
 	return currentAux;
 }
 

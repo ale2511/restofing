@@ -23,7 +23,6 @@ class IAltaEmpleado {
 		virtual void setNombreEmpleado(string) = 0;
 		virtual void setVehiculo(int) = 0;
 		virtual set<TipoRepartidor*> VerRepartidores() = 0;
-		virtual bool encontrarRepartidor(int) = 0;
 		virtual set<TipoMozo*> VerMozos() = 0;
 };
 

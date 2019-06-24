@@ -27,7 +27,7 @@ class IVentaADomicilio {
 		virtual set<TipoRepartidor *> verRepartidores() = 0;
 		virtual void elegirRepartidor(int) = 0;
 		virtual void inicializarEstado(int) = 0;
-		//virtual TipoFactura * facturar(float) = 0;
+		virtual TipoFactura * facturar(float) = 0;
 		~IVentaADomicilio(){};
 };
 

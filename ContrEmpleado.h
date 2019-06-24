@@ -70,11 +70,12 @@ class ContrEmpleado : public IAltaEmpleado, public IAsignarMozosAMesas, public I
 		bool existeVentaDom(string);
 		set <TipoEstado> ingrPedido(string);
 		void elegirEstado(int);
+		void confirmarNuevoEstadoCargar(TipoEstado, TipoFecha*, TipoHora*);
 		void confirmarNuevoEstado();
 		TipoFactura * facturar(float);
 		set<TipoMozo*> VerMozos();
 		set<TipoRepartidor*> VerRepartidores();
-		bool encontrarRepartidor(int);
+                void cargarAct();
 		void CambiarEstado(set<int>, int);
 		TipoRepartidor* obtenerTipoRepartidor(int);
 		TipoMozo* obtenerTipoMozo(int);

@@ -24,6 +24,11 @@ IConsultarPedidoAdmin * CPA = fabrica->getIConsultarPedidoAdmin();
 IModificarEstadoPedido *MEP = fabrica->getIModificarEstadoPedido();
 IVentaADomicilio * vdom = fabrica->getIVentaADomicilio();
 
+void leerString(string & s) {
+	std::getline(std::cin, s);
+}
+
+
 
 void imprimirFactura(TipoFactura);
 void AltaProd();
@@ -139,16 +144,16 @@ void imprimirFactura(TipoFactura * tf) {
 	cout << '\n';
 	
 	TipoEmpleado * te = tf->getEmpleado();
-	
-	cout << "Atendido por: " << te->getNombre() << '\n';
-	
-		TipoRepartidor * tr = NULL;
-		tr = dynamic_cast<TipoRepartidor*>(te);
-	if (tr != NULL) {
-		TipoTransporte tp = tr->getTransporte();
-		cout << "Medio de transporte: ";
-		imprimirTransporte(tp);
-		cout << '\n';
+	if (te != NULL) {
+		cout << "Atendido por: " << te->getNombre() << '\n';
+			TipoRepartidor * tr = NULL;
+			tr = dynamic_cast<TipoRepartidor*>(te);
+		if (tr != NULL) {
+			TipoTransporte tp = tr->getTransporte();
+			cout << "Medio de transporte: ";
+			imprimirTransporte(tp);
+			cout << '\n';
+		}
 	}
 }
 
@@ -166,9 +171,7 @@ void imprimirEstado(TipoEstado e) {
 void imprimirTipoAct(TipoActualizacion * ta) {
   cout << "INFORMACION DE ACTUALIZACION:" << endl;
   cout << "-----------------------------------" << endl;
-  if (ta!=NULL)
-  {
-  	TipoHora * hora = ta->getHora();
+	TipoHora * hora = ta->getHora();
 	cout << "Hora: " << hora->getHora() << ":" << hora->getMinuto() << ":" << hora->getSegundos() << '\n';
 	TipoFecha * fecha = ta->getFecha();
 	cout << "Fecha: " << fecha->getdia() << "/" << fecha->getmes() << "/" << fecha->getanio() << '\n';
@@ -186,8 +189,7 @@ void imprimirTipoAct(TipoActualizacion * ta) {
 	cout << "Telefono del cliente: " << tel << '\n';
 	TipoEstado estado = ta->getEstado();
 	imprimirEstado(estado);
-}else
-cout << "Vacio"<<"\n";}
+}
 
 
 
@@ -231,8 +233,9 @@ void AltaProd() {
 				if (!eleccion.compare("1")) {
 					simple = true;
 					cout << "Ingrese la descripcion del producto\n" << '\n';
+					//fflush(stdin);
 					cin.ignore(1,'\n');
-					fflush(stdin); getline(std::cin,descripcion);
+					leerString(descripcion);
 					cout << "Ingrese el precio del producto\n" << '\n';
 					cin >> sPrecio;
 					precio = stoi(sPrecio);
@@ -243,7 +246,9 @@ void AltaProd() {
 					if (hs) {
 						simple = false;
 						cout << "Ingrese la descripcion del producto\n" << '\n';
-						std::fflush(stdin); getline(std::cin, descripcion);
+						//fflush(stdin);
+						cin.ignore(1,'\n');
+						leerString(descripcion);
 						AP->datosProdMenu(descripcion);
 						cout << AP->darProdSim();
 						cout << "Ahora ingrese los codigos y cantidades de los productos para su menu\n" << '\n';
@@ -379,10 +384,10 @@ void AltaEmpleado() {
 		cout << "Repartidor(2)" << endl;
 		cin >> opcion;
 		if (!opcion.compare("1")) {
-			cout << "Nombre del mozo?" << endl;	
+			cout << "Nombre del mozo?" << endl;
+			//fflush(stdin);
 			cin.ignore(1,'\n');
-			fflush(stdin); 
-			getline(std::cin,nombre);
+			leerString(nombre);
             cout << "Confirmar (1)" << endl;
             cout << "Cancelar (0)" << endl;
             cin >> cancelar;
@@ -394,8 +399,7 @@ void AltaEmpleado() {
 			cout << "Ingrese nombre de Repartidor" << endl;
 			//fflush(stdin);
 			cin.ignore(1,'\n');
-			fflush(stdin); 
-			getline(std::cin,nombre);
+			leerString(nombre);
 			AE->setNombreEmpleado(nombre);
 			cout << "Elija medio de transporte:" << endl;
 			set<TipoTransporte> t = AE->DarTransporte();
@@ -646,23 +650,17 @@ void FactVenta() {
 	try {
 		bool vnf;
 		float descuentazo;
-		int mesilla,salir;
-		salir=0;
+		int mesilla;
 		cout << "Ingrese codigo de Mesa"<<"\n";
 		cin >> mesilla;
 		vnf=factventa->ventaNoFacturada(mesilla);
-		while (!vnf&&!salir) {
+		while (!vnf) {
 			cout << "Codigo de Mesa Facturada o incorrecto"<<"\n";
-			cout << "¿Desea salir? si-1 no-0"<<"\n";
-			cin >> salir;
-			if (!salir)
-			{
 			cout << "Ingrese codigo de Mesa"<<"\n";
 			cin >> mesilla;
 			vnf=factventa->ventaNoFacturada(mesilla);
-		    }
 		}
-		if (vnf&&!salir) {
+		if (vnf) {
 			cout << "Ingrese el numero de porcentaje de descuento (sin %, solo numero)"<<"\n";
 			cout << "Solo se aplicará de no haber menus en la venta"<<"\n";
 			cin >> descuentazo;
@@ -723,10 +721,9 @@ void ResFactFecha() {
 void VentaDomicilio() {
 	try {
 		bool nhc, existe, hayProductos;
-		int cerouno, nropuerta, nroapart, cant, elec, seguir, repar,salir;
+		int cerouno, nropuerta, nroapart, cant, elec, seguir, repar;
+		float descuentazo;
 		string telefono, calle, c1, c2, nombreedif, nombrecliente, cod;
-		
-		salir=0;
 		cout << "Ingrese el numero de telefono de cliente"<<"\n";
 		cin >> telefono;
 		nhc = vdom->noHayCliente(telefono);
@@ -736,22 +733,28 @@ void VentaDomicilio() {
 			cout << "Presione 0 si vive en una casa"<<"\n";
 			cin >> cerouno;
 			cout << "Ingrese el nombre de calle: "<<"\n";
+			//fflush(stdin);
 			cin.ignore(1,'\n');
-			getline(std::cin,calle);fflush(stdin); 
+			leerString(calle);
 			cout << "Ingrese el numero de puerta: "<<"\n";
 			cin >> nropuerta;
 			cout << "Ingrese una esquina: "<<"\n";
+			//fflush(stdin);
 			cin.ignore(1,'\n');
-			fflush(stdin); getline(std::cin,c1);
+			leerString(c1);
 			cout << "Ingrese la otra esquina: "<<"\n";
+			//fflush(stdin);
 			cin.ignore(1,'\n');
-			fflush(stdin); getline(std::cin,c2);
+			leerString(c2);
 			cout << "Ingrese su nombre: "<<"\n";
-			cin.ignore(1,'\n');
-			fflush(stdin); getline(std::cin,nombrecliente);
+			fflush(stdin);
+			//cin.ignore(1,'\n');
+			leerString(nombrecliente);
 			if (cerouno == 1) {
 				cout << "Ingrese el nombre del edificio: "<<"\n";
-				fflush(stdin); getline(std::cin,nombreedif);
+				//fflush(stdin);
+				cin.ignore(1,'\n');
+				leerString(nombreedif);
 				cout << "Ingrese el numero de apartamento: "<<"\n";
 				cin >> nroapart;
 				TipoDireccionApart * tda = vdom->hacedorApar(calle, nropuerta, c1, c2, nombreedif, nroapart);
@@ -776,63 +779,64 @@ void VentaDomicilio() {
 				cin >> cant;
 			}
 			existe = vdom->ingProds(cod, cant);
-			while (!existe&&salir==0) {
-				cout << "Codigo no valido ¿Desea salir? si-1, no-0" << "\n";
-				cin >> salir;
-				if (!salir)
-				{
-					cout << "Ingrese un codigo valido"<<"\n";
-					cin >> cod;
-					existe = vdom->ingProds(cod, cant);
-				}
-				
-			}if (!salir)
-				{
-				cout << "Agregar el producto de codigo "<< cod <<" con cantidad "<< cant <<"\n";
-				cout << "Presione 1 para confirmar, o 0 para desistir"<<"\n";
-				cin >> elec;
-				if (elec == 1) {
-					vdom->confirmarProductoEnDomicilio();
-					hayProductos = true;
-				}
-				cout << "Presione 0 para salir, presione 1 para continuar agregando" << '\n';
-				cin >> seguir;
+			while (!existe) {
+				cout << "Ingrese un codigo valido"<<"\n";
+				cin >> cod;
+				existe = vdom->ingProds(cod, cant);
 			}
-			} while(seguir!=0&&!salir);
-		if (hayProductos) 
-		{
+			cout << "Agregar el producto de codigo "<< cod <<" con cantidad "<< cant <<"\n";
+			cout << "Presione 1 para confirmar, o 0 para desistir"<<"\n";
+			cin >> elec;
+			if (elec == 1) {
+				vdom->confirmarProductoEnDomicilio();
+				hayProductos = true;
+			}
+			cout << "Presione 0 para salir, presione 1 para continuar agregando" << '\n';
+			cin >> seguir;
+		} while(seguir!=0);
+		if (hayProductos) {
 			cout << "¿Desea delivery?"<<"\n";
 			cout << "Presione 1 si quiere"<<"\n";
 			cout << "Presione 0 si no quiere"<<"\n";
 			cin >> cerouno;
 			if (cerouno == 1) {
-				int solicitar=1;
-				while(solicitar){
 				cout << "Ingrese el código de uno de los repartidores a continuación"<<"\n";
 				repartidores();
+				//set <TipoRepartidor *> rep =  vdom->verRepartidores();
+				//cout << rep << '\n'; IMPRIMIR REPARTIDORES
 				cin >> repar;
-				if(AE->encontrarRepartidor(repar))
-					{
-					vdom->elegirRepartidor(repar);
-					vdom->inicializarEstado(1);
-			    	cout << "Su pedido fue ingresado" << '\n';
-			    	solicitar=0;
-			    	}
-					else
-						{cout << "Repartidor no valido" << "\n";
-						 cout << "Desea solicitar otro? si 1 // no 0" << "\n";
-						 cin >> solicitar;
-						}
-				}	}
-			else{
+				vdom->elegirRepartidor(repar);
+				vdom->inicializarEstado(1);
 				cout << "Su pedido fue ingresado" << '\n';
-				vdom->inicializarEstado(3);}
-			
-			
+			} else {
+				vdom->inicializarEstado(3);
+				cout << "Como eligio no tener repartidor, procederemos a facturar su pedido" << '\n' << '\n';
+				cout << "Ingrese el numero de porcentaje de descuento (sin %, solo numero)"<<"\n";
+				cout << "Solo se aplicará de no haber menus en la venta"<<"\n";
+				cin >> descuentazo;
+				while (descuentazo < 0) {
+					cout << "Ingrese un descuento no negativo"<<"\n";
+					cin >> descuentazo;
+				}
+				TipoFactura * lafactura = vdom->facturar(descuentazo);
+				imprimirFactura(lafactura);
+				cout << "Gracias por su compra" << '\n';
+				cout << "Puede venir a retirar lo comprado cuando desee" << '\n';
+			}
+			/*
+			cout << "Ingrese el numero de porcentaje de descuento (sin %, solo numero)"<<"\n";
+			cout << "Solo se aplicará de no haber menus en la venta"<<"\n";
+			cin >> descuentazo;
+			while (descuentazo < 0) {
+				cout << "Ingrese un descuento no negativo"<<"\n";
+				cin >> descuentazo;
+			}
+			TipoFactura * lafactura = vdom->facturar(descuentazo);
+			imprimirFactura(lafactura);
+			*/
 		} else
 			cout << "No ingreso ningun producto a su venta" << '\n';
-		}
-	 catch (const char* error) {
+	} catch (const char* error) {
 		cout << error << '\n';
 	}
 	catch (...) {
@@ -843,7 +847,7 @@ void VentaDomicilio() {
 
 void VentasRepartidor(){
 
-		cout << "Ingrese numero de empleado: " << endl;
+cout << "Ingrese numero de empleado: " << endl;
         int nro;
         cin >> nro;
         set<TipoDomicilio*> ventas = MEP->getVentasRepartidor(nro);
@@ -915,7 +919,6 @@ void ConsultarActualizacionesCliente() {
 		bool nhc = CPC->noHayCliente(tel);
 		if (nhc)
 			throw "Disculpe, usted no esta ingresado en el sistema\n";
-		 //CV->setTelefono(tel);
 		bool rm = CPC->recibeMensajes();
 		if (!rm)
 			throw "Lo sentimos, usted no esta de alta para recibir mensajes";
@@ -1044,6 +1047,10 @@ void CargarDatos() {
 		vdom->elegirRepartidor(4);
 		vdom->inicializarEstado(2);
 	}
+	
+	MEP->cargarAct();
+
+
 }
 
 //------------nuevo

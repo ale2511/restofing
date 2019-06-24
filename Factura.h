@@ -3,14 +3,14 @@
 #include "tipofactura.h"
 #include <set>
 #include <string>
-#include "CantProducto.h"
+#include "tipoCantProducto.h"
 
 using namespace std;
 
 class Factura {
 	private:
 		string nroFactura;
-		map<string, CantProducto*> productos;
+		map<string, TipoCantProducto*> productos;
 		TipoFecha* fecha;
 		TipoHora* hora;
 		float subtotal;
@@ -19,10 +19,9 @@ class Factura {
 		float total;
 		TipoEmpleado* empleado;
 	public:
-		Factura(string, map<string, CantProducto*>, TipoFecha*, TipoHora*, float, float, float, float, TipoEmpleado*);
+		Factura(string, map<string, TipoCantProducto*>, TipoFecha*, TipoHora*, float, float, float, float, TipoEmpleado*);
 		string getNrofactura();
-		set<string> mostrarCodProds();
-		set<int> mostrarCantProds();
+		map<string, TipoCantProducto*> mostrarTipoProds();
 		TipoFecha* getFecha();
 		TipoHora* getHora();
 		float getSubtotal();

@@ -84,7 +84,8 @@ class ContrVenta : public IAgregarProductoAUnaVenta, public IQuitarProductoAUnaV
 	void AgregarMensaje(TipoActualizacion*);
 	void AgregarFactura(Factura*);
 	//funciones sistema
-	set<TipoCantProducto*> FacturaATipoCantProducto (Factura *);
+	map <string, TipoCantProducto*> CPMapTCP (map <string, CantProducto *>);
+	set <TipoCantProducto*> MapTCPSetTPC (map <string, TipoCantProducto*>);
 	bool ventaNoFacturada(int);
 	set <TipoProducto *> darProds();
 	bool ingProds(string, int);

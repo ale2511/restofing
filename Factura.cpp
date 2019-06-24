@@ -4,7 +4,7 @@
 using namespace std;
 
 
-Factura :: Factura(string nro, map<string, CantProducto*> prods, TipoFecha* fechita, TipoHora* horita, float sub_total, float descuentillo, float precio_sin_iva, float totalcompra, TipoEmpleado * f){
+Factura :: Factura(string nro, map<string, TipoCantProducto*> prods, TipoFecha* fechita, TipoHora* horita, float sub_total, float descuentillo, float precio_sin_iva, float totalcompra, TipoEmpleado * f){
 	nroFactura = nro;
 	fecha = fechita;
 	hora = horita;
@@ -12,7 +12,7 @@ Factura :: Factura(string nro, map<string, CantProducto*> prods, TipoFecha* fech
 	descuento = descuentillo;
 	precioSinIva = precio_sin_iva;
 	total = totalcompra;
-	map<string, CantProducto*> :: iterator it;
+	map<string, TipoCantProducto*> :: iterator it;
 	for (it=prods.begin(); it != prods.end(); ++it){
 		productos.insert(*it);
 	}
@@ -22,24 +22,8 @@ string Factura :: getNrofactura(){
 	 return nroFactura;
 }
 
-set<string> Factura :: mostrarCodProds() {
-	set <string> result;
-	map <string, CantProducto *> :: iterator it;
-	for (it = productos.begin(); it!= productos.end(); ++it) {
-		string s = it->second->getCodProdGral();
-		result.insert(s);
-	}
-	return result;
-}
-
-set<int> Factura :: mostrarCantProds() {
-	set <int> result;
-	map <string, CantProducto *> :: iterator it;
-	for (it = productos.begin(); it!= productos.end(); ++it) {
-		int s = it->second->getCant();
-		result.insert(s);
-	}
-	return result;
+map<string, TipoCantProducto*> Factura :: mostrarTipoProds() {
+	return productos;
 }
 
 TipoFecha* Factura :: getFecha(){
@@ -72,7 +56,7 @@ TipoEmpleado* Factura :: getEmpleado() {
  
 
 TipoCantProducto * Factura :: verProdsFacturados(string cod, TipoCantProducto * tcp) {
-	map <string, CantProducto *> :: iterator it;
+	map <string, TipoCantProducto *> :: iterator it;
 	it = productos.find(cod);
 	if((it != productos.end()) && (it->first == cod))
 		tcp->setCant(tcp->getCant() + it->second->getCant());
